@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<script type="text/javascript" src="api_conf.js"></script>
+<script
+        src="https://code.jquery.com/jquery-1.12.4.js"
+        integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+        crossorigin="anonymous"></script>
+
+<script>
+    $.ajaxSetup({async:false});
+    function tambah_data(){
+      var unindexed_array = $('#Myform').serializeArray();
+      var indexed_array = {};
+
+      $.map(unindexed_array, function (n, i){
+        indexed_array[n['name']] = n['value'];
+      });
+      console.log(indexed_array);
+      //create
+
+
+    $.ajax({
+      type: "POST",
+      url: baseUrl+"/auth/login",
+      data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+      dataType: "json",
+      headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+      success: function(result){
+        console.log(result);
+        $.ajax({
+          type: "POST",
+          url: baseUrl+"/book/create",
+          data : JSON.stringify(indexed_array),      
+          dataType: "json",
+          headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+          "User-ID" : "1", "Authorization" : result.token},
+          success: function(result){
+            console.log(result);
+          }
+
+        });
+      }
+
+    });
+
+    //tutup create
+
+    };
+
+
+    // Update data
+    function update_data(id){
+      var unindexed_array = $('#Myform').serializeArray();
+      var indexed_array = {};
+
+      $.map(unindexed_array, function (n, i){
+        indexed_array[n['name']] = n['value'];
+      });
+      console.log(indexed_array);
+
+      $.ajax({
+        type: "POST",
+        url: baseUrl+"/auth/login",
+        data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+        dataType: "json",
+        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+        success: function(result){
+          console.log(result);
+          $.ajax({
+            type: "PUT",
+            url: baseUrl+"/book/update/"+id,
+            data : JSON.stringify(indexed_array),      
+            dataType: "json",
+            headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+            "User-ID" : "1", "Authorization" : result.token},
+            success: function(result){
+              console.log(result);
+
+            }
+
+          });
+        }
+
+      });  
+
+    };
+    // tutup update
+
+    // Delete data
+
+    function delete_data(id){
+      $.ajax({
+        type: "POST",
+        url: baseUrl+"/auth/login",
+        data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+        dataType: "json",
+        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+        success: function(result){
+          console.log(result);
+          $.ajax({
+            type: "DELETE",
+            url: baseUrl+"/book/delete/"+id,
+            dataType: "json",
+            headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+            "User-ID" : "1", "Authorization" : result.token},
+            success: function(result){
+              console.log(result);
+
+            }
+
+          });
+        }
+
+      });  
+
+    };
+    // tutup delete
+
+  function detail(id){
+    $.ajax({
+      type: "POST",
+      url: baseUrl+"/auth/login",
+      data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+      dataType: "json",
+      headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+      success: function(result){
+        console.log(result);
+        $.ajax({
+          type: "GET",
+          url: baseUrl+"/book/detail/"+id,
+          dataType: "json",
+          headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+          "User-ID" : "1", "Authorization" : result.token},
+          success: function(result){
+            console.log(result);
+
+          }
+
+        });
+      }
+
+    });  
+
+  };
+
+  // get all book
+  function getallbook(){
+    var jsonData;
+    $.ajax({
+      type: "POST",
+      url: baseUrl+"/auth/login",
+      data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+      dataType: "json",
+      headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+      success: function(result){
+        console.log(result);
+        $.ajax({
+          type: "GET",
+          url: baseUrl+"/book/",
+          dataType: "json",
+          headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+          "User-ID" : "1", "Authorization" : result.token},
+          success: function(result){
+            //console.log(result);
+            jsonData=result;
+          }
+
+        });
+      }
+
+    }); 
+    return jsonData; 
+
+  };
+  //tutup
+  // Builds the HTML Table out of myList.
+  function buildHtmlTable(json_collections,selector) {
+    var columns = addAllColumnHeaders(json_collections, selector);
+
+    for (var i = 0; i < json_collections.length; i++) {
+      var row = $('<tr/>');
+      for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+        var cellValue = json_collections[i][columns[colIndex]];
+        if (cellValue == null) cellValue = "";
+        // console.log(cellValue);
+        row.append($('<td/>').html(cellValue));
+      }
+      row.append($('<td/>').html("delete"));
+      $(selector).append(row);
+    }
+  }
+
+  // Adds a header row to the table and returns the set of columns.
+  // Need to do union of keys from all records as some records may not contain
+  // all records.
+  function addAllColumnHeaders(myList, selector) {
+    var columnSet = [];
+    var headerTr$ = $('<tr/>');
+
+    for (var i = 0; i < myList.length; i++) {
+      var rowHash = myList[i];
+      for (var key in rowHash) {
+        if ($.inArray(key, columnSet) == -1) {
+          columnSet.push(key);
+          headerTr$.append($('<th/>').html(key));
+        }
+      }
+    }
+    headerTr$.append($('<th/>').html("delete"));
+    $(selector).append(headerTr$);
+
+    return columnSet;
+  }
+
+  $(document).ready(function(){
+    console.log(getallbook());
+    buildHtmlTable(getallbook(), "#myTable");
+ });
+
+</script>
+</head>
+<body>
+  <form id="Myform" onSubmit="return false" >
+        <label>Title</label>
+        <input type="text" name="title" class="form-control">
+        <br>
+        <label>Author</label>
+        <input type="text" name="author" class="form-control">
+        <input type="submit" name="submit" value="Create" onClick="update_data(18);">
+
+    </form>
+    <a href="javascript:void(0)" onclick="delete_data(18);"> delete</a><br>
+    <a href="javascript:void(0)" onclick="detail(17);"> detail</a>
+
+    <table id="myTable" border="1">
+    </table>
+</body>
+</html>

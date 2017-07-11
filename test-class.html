@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+    <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="api_conf.js"></script>
+<script>
+$.ajaxSetup({async:false});
+
+//Get All Data
+function get_all_class(){
+  var jsonData;
+  $.ajax({
+    type: "POST",
+    url: baseUrl+login,
+    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+    dataType: "json",
+    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+    success: function(result){
+      console.log(result);
+      $.ajax({
+        type: "GET",
+        url: baseUrl+getallClass,
+        dataType: "json",
+        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+        "User-ID" : "1", "Authorization" : result.token},
+        success: function(result){
+          //console.log(result);
+          jsonData=result;
+        }
+      });
+    }
+  }); 
+  return jsonData; 
+};	
+
+
+	// Create Data
+	function add_class(){
+	  var unindexed_array = $('#Myform').serializeArray();
+	  var indexed_array = {};
+
+	  $.map(unindexed_array, function (n, i){
+	    indexed_array[n['name']] = n['value'];
+	  });
+	  console.log(indexed_array);
+
+
+	  $.ajax({
+	    type: "POST",
+	    url: baseUrl+login,
+	    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+	    dataType: "json",
+	    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+	    success: function(result){
+	      console.log(result);
+	      $.ajax({
+	        type: "POST",
+	        url: baseUrl+addClass,
+	        data : JSON.stringify(indexed_array),      
+	        dataType: "json",
+	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+	        "User-ID" : "1", "Authorization" : result.token},
+	        success: function(result){
+	          console.log(result);
+	        }
+
+	      });
+	    }
+	  });	  
+	  $("#myTable tbody").html("");
+	  buildHtmlTable(get_all_class(), "#myTable");
+
+	};
+
+	//Update Data
+	function update_class(id){
+	  var unindexed_array = $('#Myform').serializeArray();
+	  var indexed_array = {};
+
+	  $.map(unindexed_array, function (n, i){
+	    indexed_array[n['name']] = n['value'];
+	  });
+	  console.log(indexed_array);
+
+	  $.ajax({
+	    type: "POST",
+	    url: baseUrl+login,
+	    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+	    dataType: "json",
+	    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+	    success: function(result){
+	      console.log(result);
+	      $.ajax({
+	        type: "PUT",
+	        url: baseUrl+updateClass+id,
+	        data : JSON.stringify(indexed_array),      
+	        dataType: "json",
+	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+	        "User-ID" : "1", "Authorization" : result.token},
+	        success: function(result){
+	          console.log(result);	          
+	        }
+	      });
+	    }
+	  }); 	  
+	  $("#myTable tbody").html("");
+	  buildHtmlTable(get_all_class(), "#myTable");	
+	};	
+		//Delete Data
+		function delete_class(id){
+		  $.ajax({
+		    type: "POST",
+		    url: baseUrl+login,
+		    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+		    dataType: "json",
+		    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+		    success: function(result){
+		      console.log(result);
+		      $.ajax({
+		        type: "DELETE",
+		        url: baseUrl+deleteClass+id,
+		        dataType: "json",
+		        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+		        "User-ID" : "1", "Authorization" : result.token},
+		        success: function(result){
+		          console.log(result);
+		        }
+		      });
+		    }
+		  });	    
+		   $("#myTable tbody").html("");
+		   buildHtmlTable(get_all_class(), "#myTable");	   
+		};
+
+		//Get Detail
+		function detail_class(id){
+		  $.ajax({
+		    type: "POST",
+		    url: baseUrl+login,
+		    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
+		    dataType: "json",
+		    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
+		    success: function(result){
+		      console.log(result);
+		      $.ajax({
+		        type: "GET",
+		        url: baseUrl+getClass+id,
+		        dataType: "json",
+		        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+		        "User-ID" : "1", "Authorization" : result.token},
+		        success: function(result){
+		          console.log(result);	        
+		          $("#name").val(result.name);
+		          $("#capacity").val(result.capacity);
+		          $("#update").attr("onclick","update_class("+id+");");	          
+		        }
+		      });
+		    }
+		  });
+
+		};
+
+		
+		// Build Table
+		 function buildHtmlTable(json_collections,selector) {
+		   var columns = addAllColumnHeaders(json_collections, selector);
+
+		   for (var i = 0; i < json_collections.length; i++) {
+		     var row = $('<tr/>');
+		     for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+		       var cellValue = json_collections[i][columns[colIndex]];
+		       var getclassId = json_collections[i][columns[0]];
+		       if (cellValue == null) cellValue = "";
+		       // console.log(cellValue);
+		       row.append($('<td/>').html(cellValue));
+		     }
+		     row.append($('<td/>').html("<a href='javascript:void(0)' onclick='delete_class("+getclassId+");'>Delete</a>"));
+		     row.append($('<td/>').html("<a href='javascript:void(0)' onclick='detail_class("+getclassId+");'>Edit</a>"));
+		     $(selector).append(row);
+		   }
+		 }
+
+		 // Adds a header row to the table and returns the set of columns.
+		 // Need to do union of keys from all records as some records may not contain
+		 // all records.
+		 function addAllColumnHeaders(myList, selector) {
+		   var columnSet = [];
+		   var headerTr$ = $('<tr/>');
+
+		   for (var i = 0; i < myList.length; i++) {
+		     var rowHash = myList[i];
+		     for (var key in rowHash) {
+		       if ($.inArray(key, columnSet) == -1) {
+		         columnSet.push(key);
+		         headerTr$.append($('<th/>').html(key));
+		       }
+		     }
+		   }
+		   headerTr$.append($('<th/>').html("Delete"));
+		   headerTr$.append($('<th/>').html("Edit"));
+		   $(selector).append(headerTr$);
+		   return columnSet;
+		 }
+
+		 $(document).ready(function(){
+		   console.log(get_all_class());
+		   buildHtmlTable(get_all_class(), "#myTable");
+		});
+	</script>
+
+</script>
+<body>
+	<form id="Myform" onSubmit="return false">
+		<label>Class Name</label>
+		<input type="text" id="name" name="name" placeholder="Enter Your Name"> <br>
+		<label>Class Capacity</label>
+		<input type="text" id="capacity" name="capacity" placeholder="Enter Your Email"> <br>
+		<input type="submit" id="update" name="update" value="Update">
+		<input type="submit" id="add" name="add" value="Add" onClick="add_class();">
+	</form>
+    <table id="myTable" border="1">
+    </table></body>
+</html>
