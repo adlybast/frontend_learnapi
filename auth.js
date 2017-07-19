@@ -15,9 +15,9 @@ function auth_login()
 		dataType: "json",
 		headers:{"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json"},
 		success: function(data){
-			$(location).attr('href', 'class_list.html'),
+			$(location).attr('href', 'student.html'),
 			console.log(data)
-   			localStorage.setItem('token', data.token);		
+   			localStorage.setItem('token', data.token);
 		}
 	});
 };

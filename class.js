@@ -2,28 +2,18 @@
 
 	//Get All Data
 	function get_all_class(){
-	  var jsonData;
-	  $.ajax({
-	    type: "POST",
-	    url: baseUrl+login,
-	    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
-	    dataType: "json",
-	    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
-	    success: function(result){
-	      console.log(result);
+	  var jsonData;	  
 	      $.ajax({
 	        type: "GET",
 	        url: baseUrl+getallClass,
 	        dataType: "json",
 	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-	        "User-ID" : "1", "Authorization" : result.token},
+	        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 	        success: function(result){
 	          // console.log(result);
 	          jsonData=result;
 	        }
 	      });
-	    }
-	  }); 
 	  return jsonData; 
 	};	
 
@@ -35,31 +25,18 @@
 	  $.map(unindexed_array, function (n, i){
 	    indexed_array[n['name']] = n['value'];
 	  });
-	  // console.log(indexed_array);
-
-
-	  $.ajax({
-	    type: "POST",
-	    url: baseUrl+login,
-	    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
-	    dataType: "json",
-	    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
-	    success: function(result){
-	      console.log(result);
 	      $.ajax({
 	        type: "POST",
 	        url: baseUrl+addClass,
 	        data : JSON.stringify(indexed_array),      
 	        dataType: "json",
 	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-	        "User-ID" : "1", "Authorization" : result.token},
+	        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 	        success: function(result){
 	          console.log(result);
 	        }
 
 	      });
-	    }
-	  });	  
 	  $("#myTable tbody").html("");
 	  buildHtmlTable(get_all_class(), "#myTable");
 
@@ -75,72 +52,45 @@
 	  });
 	  console.log(indexed_array);
 
-	  $.ajax({
-	    type: "POST",
-	    url: baseUrl+login,
-	    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
-	    dataType: "json",
-	    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
-	    success: function(result){
-	      console.log(result);
 	      $.ajax({
 	        type: "PUT",
 	        url: baseUrl+updateClass+id,
 	        data : JSON.stringify(indexed_array),      
 	        dataType: "json",
 	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-	        "User-ID" : "1", "Authorization" : result.token},
+	        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 	        success: function(result){
 	          console.log(result);	          
 	        }
 	      });
-	    }
-	  }); 	  
 	  $("#myTable tbody").html("");
 	  buildHtmlTable(get_all_class(), "#myTable");	
 	};	
+
 		//Delete Data
 		function delete_class(id){
-		  $.ajax({
-		    type: "POST",
-		    url: baseUrl+login,
-		    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
-		    dataType: "json",
-		    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
-		    success: function(result){
-		      console.log(result);
 		      $.ajax({
 		        type: "DELETE",
 		        url: baseUrl+deleteClass+id,
 		        dataType: "json",
 		        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-		        "User-ID" : "1", "Authorization" : result.token},
+		        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 		        success: function(result){
 		          console.log(result);
 		        }
 		      });
-		    }
-		  });	    
 		   $("#myTable tbody").html("");
 		   buildHtmlTable(get_all_class(), "#myTable");	   
 		};
 
 		//Get Detail
 		function detail_class(id){
-		  $.ajax({
-		    type: "POST",
-		    url: baseUrl+login,
-		    data : JSON.stringify({"username" : "admin", "password" : "Admin123$"}),      
-		    dataType: "json",
-		    headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json" },
-		    success: function(result){
-		      console.log(result);
 		      $.ajax({
 		        type: "GET",
 		        url: baseUrl+getClass+id,
 		        dataType: "json",
 		        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-		        "User-ID" : "1", "Authorization" : result.token},
+		        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 		        success: function(result){
 		          console.log(result);	        
 		          $("#name").val(result.name);
@@ -148,7 +98,23 @@
 		          $("#update").attr("onclick","update_class("+id+");");	          
 		        }
 		      });
-		    }
-		  });
-
 		};	
+
+		// Get Class List Detail
+		function class_list(id){
+		var jsonData;
+		window.jsonData_id=id;
+		localStorage.setItem('idClass',id);	          
+	      $.ajax({
+	        type: "GET",
+	        url: baseUrl+getClasslist+window.jsonData_id,
+	        dataType: "json",
+	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
+	        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
+	        success: function(result){
+	          console.log(result);
+	          jsonData=result;    
+	        }
+	      });
+	    return jsonData;			
+		};
