@@ -133,7 +133,6 @@
 	};
 
 	function kick_student(id){		
-		// var jsonData
 	      $.ajax({
 	        type: "DELETE",
 	        url: baseUrl+kickStudent+id,
@@ -144,6 +143,5 @@
 	          console.log(result);	        	          	          
 	        }
 	      });
-	   $("#myTable tbody").html("");
-	   buildHtmlTable(get_all_student(), "#myTable");
+	   	   window.top.location.reload(false);	      
 	};
