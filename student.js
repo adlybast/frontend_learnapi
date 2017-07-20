@@ -86,7 +86,7 @@
 	        url: baseUrl+getStudent+id,
 	        dataType: "json",
 	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
-	        "User-ID" : "1", "Authorization" : result.token},
+	        "User-ID" : "1", "Authorization" : localStorage.getItem('token')},
 	        success: function(result){
 	          console.log(result);	        
 	          $("#name").val(result.name);
@@ -135,7 +135,7 @@
 	function kick_student(id){		
 		// var jsonData
 	      $.ajax({
-	        type: "GET",
+	        type: "DELETE",
 	        url: baseUrl+kickStudent+id,
 	        dataType: "json",
 	        headers: {"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json",
@@ -144,4 +144,6 @@
 	          console.log(result);	        	          	          
 	        }
 	      });
+	   $("#myTable tbody").html("");
+	   buildHtmlTable(get_all_student(), "#myTable");
 	};
