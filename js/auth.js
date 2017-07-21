@@ -15,7 +15,7 @@ function auth_login()
 		dataType: "json",
 		headers:{"Client-Service" : "frontend-client", "Auth-Key" : "simplerestapi", "Content-Type" : "application/json"},
 		success: function(data){
-			$(location).attr('href', 'https://boxilearning.000webhostapp.com/frontend_learnapi/frontend_learnapi/student.html'),
+			$(location).attr('href', 'http://boxilearning.000webhostapp.com/frontend_learnapi/frontend_learnapi/student.html'),
 			console.log(data)
    			localStorage.setItem('token', data.token);
 		}
